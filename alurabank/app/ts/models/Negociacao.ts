@@ -9,22 +9,10 @@ export class Negociacao {
     //     this._valor = valor;
     // }
 
-    constructor(private _data: Date, private _quantidade: number, private _valor: number) {}
+    constructor(readonly data: Date, readonly quantidade: number, readonly valor: number) {}
     // corta caminho na definição da prop na classe e o assign do constructor
 
-    get data(): Date {
-        return this._data;
-    }
-
-    get quantidade(): number {
-        return this._quantidade;
-    }
-
-    get valor(): number {
-        return this._valor;
-    }
-
     get volume(): number {
-        return this._valor * this._quantidade;
+        return this.valor * this.quantidade;
     }
 }

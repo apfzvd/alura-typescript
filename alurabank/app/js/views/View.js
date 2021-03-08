@@ -1,16 +1,21 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var View;
     var __moduleName = context_1 && context_1.id;
+    var View;
     return {
         setters: [],
         execute: function () {
             View = class View {
-                constructor(seletor) {
+                constructor(seletor, scape = false) {
                     this._elemento = $(seletor);
+                    this._scape = scape;
                 }
                 update(data) {
-                    this._elemento.html(this.template(data));
+                    let template = this.template(data);
+                    if (this._scape) {
+                        template = template.replace(/<script>[\s\S]*?<\/script>/, '');
+                    }
+                    this._elemento.html(template);
                 }
             };
             exports_1("View", View);

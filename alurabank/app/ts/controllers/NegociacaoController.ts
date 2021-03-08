@@ -19,9 +19,15 @@ export class NegociacaoController {
 
     adiciona(event: Event): void {
         event.preventDefault();
+        let date = new Date(this._inputData.val().replace(/-/g, ','));
+
+        if (!this._isWeekDay(date)) {
+            this._mensagemView.update('Negociações não podem ser feitas no fim de semana!');
+            return;
+        }
 
         const negociacao = new Negociacao(
-            new Date(this._inputData.val().replace(/-/g, ',')), 
+            date, 
             parseInt(this._inputQuantidade.val()), 
             parseFloat(this._inputValor.val())
         );
@@ -31,4 +37,18 @@ export class NegociacaoController {
         this._negociacoesView.update(this._negociacoes);
         this._mensagemView.update('Negociação adicionada!')
     }
+
+    private _isWeekDay(date: Date):boolean {
+        return date.getDay() !== weekDays.Saturday && date.getDay() !== weekDays.Sunday;
+    }
 }
+
+enum weekDays {
+    Sunday,
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday
+};
