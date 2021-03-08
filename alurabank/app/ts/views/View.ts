@@ -1,4 +1,4 @@
-abstract class View<T> { // asbtract classes are only for inheritance
+export abstract class View<T> { // asbtract classes are only for inheritance
     private _elemento: JQuery;
     
     constructor(seletor: string) {
