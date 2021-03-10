@@ -1,5 +1,6 @@
-import { domInject } from "../helpers/decorators/dom-inject";
-import { Negociacao, Negociacoes } from "../models/index";
+import { throttle, domInject } from "../helpers/decorators/index";
+import { Negociacao, NegociacaoParcial, Negociacoes } from "../models/index";
+import { NegociacaoService } from "../services/NegociacaoService";
 import { MensagemView, NegociacoesView } from "../views/index";
 
 export class NegociacaoController {
@@ -16,12 +17,14 @@ export class NegociacaoController {
     private _negociacoesView = new NegociacoesView('#negociacoesView');
     private _mensagemView = new MensagemView('#mensagemView');
 
+    private _service = new NegociacaoService();
+
     constructor() {
         this._negociacoesView.update(this._negociacoes);
     }
 
-    adiciona(event: Event): void {
-        event.preventDefault();
+    @throttle()
+    adiciona(): void {
         let date = new Date(this._inputData.val().replace(/-/g, ','));
 
         if (!this._isWeekDay(date)) {
@@ -43,6 +46,15 @@ export class NegociacaoController {
 
     private _isWeekDay(date: Date):boolean {
         return date.getDay() !== weekDays.Saturday && date.getDay() !== weekDays.Sunday;
+    }
+
+    @throttle()
+    importData(): void {
+        this._service.importData()
+          .then(data => {
+            data.forEach(neg => this._negociacoes.adiciona(neg));
+            this._negociacoesView.update(this._negociacoes);
+          })       
     }
 }
 
