@@ -8,13 +8,16 @@
     "compile": "./node_modules/.bin/tsc",
     "watch": "./node_modules/.bin/tsc -w",
     "server": "./node_modules/.bin/lite-server --baseDir=app",
-    "start": "./node_modules/.bin/concurrently \"npm run watch\" \"npm run server\""
+    "api": "node ./api/server.js",
+    "start": "./node_modules/.bin/concurrently \"npm run api\" \"npm run watch\" \"npm run server\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/jquery": "^2.0.42",
+    "body-parser": "^1.15.1",
     "concurrently": "^3.4.0",
+    "express": "^4.12.3",
     "lite-server": "^2.3.0",
     "typescript": "^2.3.2"
   }
