@@ -1,4 +1,5 @@
 import { throttle, domInject } from "../helpers/decorators/index";
+import { imprime } from "../helpers/index";
 import { Negociacao, NegociacaoParcial, Negociacoes } from "../models/index";
 import { NegociacaoService } from "../services/NegociacaoService";
 import { MensagemView, NegociacoesView } from "../views/index";
@@ -41,7 +42,9 @@ export class NegociacaoController {
         this._negociacoes.adiciona(negociacao);
 
         this._negociacoesView.update(this._negociacoes);
-        this._mensagemView.update('Negociação adicionada!')
+        this._mensagemView.update('Negociação adicionada!');
+
+        imprime(negociacao, this._negociacoes);
     }
 
     private _isWeekDay(date: Date):boolean {
@@ -49,12 +52,21 @@ export class NegociacaoController {
     }
 
     @throttle()
-    importData(): void {
-        this._service.importData()
-          .then(data => {
-            data.forEach(neg => this._negociacoes.adiciona(neg));
-            this._negociacoesView.update(this._negociacoes);
-          })       
+    async importData(): Promise<any> {
+        try {
+            const imported = await this._service.importData();
+            const negociacoesJaImportadas = this._negociacoes.paraArray();
+
+            imported
+                .filter(negociacao => 
+                    !negociacoesJaImportadas.some(jaImportada => 
+                        negociacao.ehIgual(jaImportada))) // filtrar apenas as que não tem nenhuma igual
+                .forEach(neg => this._negociacoes.adiciona(neg));
+            
+                this._negociacoesView.update(this._negociacoes); 
+        } catch (err) {
+            this._mensagemView.update(err.message);
+        }     
     }
 }
 

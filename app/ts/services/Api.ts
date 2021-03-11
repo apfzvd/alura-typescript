@@ -14,11 +14,20 @@ export abstract class Api {
         return res;
     }
 
-    fetch({ url, success, error, handler }: FetchArgs): Promise<any> {
-        return fetch(url)
-            .then(res => handler ? handler(res) : this.isOk(res))
-            .then(res => res.json())
-            .catch(res => error && error(res))
-            .then(res => success(res))
+    async fetch({ url, success, error, handler }: FetchArgs): Promise<any> {
+        try {
+            const fetched = await fetch(url);
+            const res = handler ? handler(fetched) : this.isOk(fetched);
+
+            const jsonData = await res.json();
+
+            return success(jsonData)
+        } catch (err) {
+            if (error) {
+                return error(err)
+            }
+            console.log(err);
+            throw new Error('Erro padrão da Api')
+        }
     }
 }
